@@ -12,6 +12,14 @@ on:
   schedule:
     - cron: '30 6 * * *'   # ogni giorno alle 06:30 UTC
   workflow_dispatch:
+  # Si esegue anche quando cambia la pipeline stessa: serve a popolare
+  # data/carburanti.json senza aspettare il primo giro notturno e a
+  # riverificare subito lo script dopo una modifica.
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/aggiorna-prezzi.yml'
+      - 'scripts/aggiorna-prezzi.mjs'
 
 permissions:
   contents: write
