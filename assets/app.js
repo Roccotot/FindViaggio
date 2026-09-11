@@ -16,12 +16,19 @@
   /* ---------- parametri delle stime ---------- */
 
   const CAR = {
-    consumoLitri100: 7,          // L / 100 km
-    prezzoCarburante: 1.85,      // € / L
     pedaggioKm: 0.08,            // € / km oltre la soglia
     sogliaPedaggio: 100,         // km
   };
-  const CAR_EUR_KM = (CAR.consumoLitri100 / 100) * CAR.prezzoCarburante; // ≈ 0.13
+
+  /* Prezzi di riserva, usati solo se data/carburanti.json manca o è vecchio.
+     Quelli veri arrivano ogni mattina dagli open data MIMIT. */
+  const PREZZI_RISERVA = { benzina: 1.80, gasolio: 1.70, gpl: 0.72, metano: 1.40 };
+
+  const CONSUMO_DEFAULT = { benzina: 7, gasolio: 5.5, gpl: 9, metano: 5 };
+  const UNITA = { benzina: 'L', gasolio: 'L', gpl: 'L', metano: 'kg' };
+  const ETICHETTA = { benzina: 'Benzina', gasolio: 'Gasolio', gpl: 'GPL', metano: 'Metano' };
+
+  const GIORNI_VALIDITA = 21;    // oltre questa soglia il dato è considerato vecchio
 
   const TRAIN = {
     fattoreTratta: 0.95,         // la ferrovia è mediamente più diretta della strada
@@ -111,6 +118,61 @@
     });
   }
 
+  /* ---------- listino carburanti ---------- */
+
+  /* Il file viene rigenerato ogni mattina da una GitHub Action a partire
+     dagli open data MIMIT e servito dalla nostra stessa origine: niente
+     CORS, niente chiavi API, niente chiamate a terzi dal browser. */
+  let listino = null;
+
+  async function caricaListino() {
+    try {
+      const res = await fetch('data/carburanti.json', { cache: 'no-cache' });
+      if (!res.ok) throw new Error('non disponibile');
+      const dati = await res.json();
+      if (!dati.nazionale || !dati.aggiornato) throw new Error('formato inatteso');
+
+      const giorni = (Date.now() - new Date(`${dati.aggiornato}T12:00:00Z`)) / 86400000;
+      if (giorni > GIORNI_VALIDITA) throw new Error('dato scaduto');
+
+      listino = dati;
+    } catch {
+      listino = null; // si prosegue con i prezzi di riserva
+    }
+    aggiornaEtichettaPrezzo();
+  }
+
+  /* Restituisce il prezzo da usare e da dove arriva. */
+  function prezzoCarburante(tipo, provincia) {
+    if (listino) {
+      const locale = provincia && listino.province[provincia]?.[tipo];
+      if (locale) {
+        return { valore: locale, ambito: `media ${provincia}`, reale: true, data: listino.aggiornato };
+      }
+      const naz = listino.nazionale[tipo];
+      if (naz) {
+        return { valore: naz, ambito: 'media nazionale', reale: true, data: listino.aggiornato };
+      }
+    }
+    return { valore: PREZZI_RISERVA[tipo], ambito: 'stima statica', reale: false, data: null };
+  }
+
+  function aggiornaEtichettaPrezzo() {
+    const tipo = $('alimentazione').value;
+    const p = prezzoCarburante(tipo, null);
+    const nota = $('prezzo-live');
+    if (p.reale) {
+      nota.innerHTML =
+        `<span class="tag-live">oggi</span> ${ETICHETTA[tipo]} self ` +
+        `${p.valore.toFixed(3).replace('.', ',')} €/${UNITA[tipo]} · media nazionale MIMIT, ` +
+        `rilevazione del ${fmtDate(p.data)}`;
+    } else {
+      nota.textContent =
+        `Stima statica: ${ETICHETTA[tipo]} a ${p.valore.toFixed(2).replace('.', ',')} €/${UNITA[tipo]}, ` +
+        'listino del giorno non ancora disponibile.';
+    }
+  }
+
   /* ---------- servizi esterni ---------- */
 
   const geoCache = new Map();
@@ -120,8 +182,8 @@
     if (geoCache.has(key)) return geoCache.get(key);
 
     const url =
-      'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&accept-language=it&q=' +
-      encodeURIComponent(query);
+      'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&addressdetails=1' +
+      '&accept-language=it&q=' + encodeURIComponent(query);
 
     const res = await fetch(url, { headers: { Accept: 'application/json' } });
     if (!res.ok) throw new Error('il servizio di geolocalizzazione non risponde');
@@ -129,11 +191,17 @@
     const data = await res.json();
     if (!data.length) throw new Error(`nessun risultato per "${query}"`);
 
+    /* Per l'Italia Nominatim espone il codice provincia come "IT-PO"
+       nel campo ISO3166-2-lvl6: ci serve per il prezzo locale. */
+    const iso = data[0].address?.['ISO3166-2-lvl6'] || '';
+    const prov = /^IT-([A-Z]{2})$/.exec(iso)?.[1] || null;
+
     const place = {
       lat: parseFloat(data[0].lat),
       lon: parseFloat(data[0].lon),
       name: data[0].display_name,
       short: data[0].name || query,
+      provincia: prov,
     };
     geoCache.set(key, place);
     return place;
@@ -200,13 +268,23 @@
     return TRAIN.scaglioni.find(([max]) => km <= max);
   }
 
-  function buildModes({ roadKm, roadMin, airKm, ospiti, personeAuto, origine, zona, dateGo }) {
+  function buildModes({
+    roadKm, roadMin, airKm, ospiti, personeAuto, origine, zona, dateGo,
+    alimentazione, consumo, provinciaPartenza,
+  }) {
     const modes = [];
 
-    /* --- auto --- */
-    const carburante = roadKm * CAR_EUR_KM;
+    /* --- auto: il carburante usa il prezzo di oggi della provincia di partenza --- */
+    const p = prezzoCarburante(alimentazione, provinciaPartenza);
+    const eurKm = (consumo / 100) * p.valore;
+    const carburante = roadKm * eurKm;
     const pedaggi = roadKm > CAR.sogliaPedaggio ? roadKm * CAR.pedaggioKm : 0;
     const trattaAuto = carburante + pedaggi;
+
+    const prezzoTxt = `${p.valore.toFixed(3).replace('.', ',')} €/${UNITA[alimentazione]}`;
+    const fonteTxt = p.reale
+      ? `${ETICHETTA[alimentazione]} self a ${prezzoTxt} · ${p.ambito}, MIMIT ${fmtDate(p.data)}`
+      : `${ETICHETTA[alimentazione]} a ${prezzoTxt} · stima statica, listino del giorno non disponibile`;
     modes.push({
       id: 'car',
       emoji: '🚗',
@@ -217,9 +295,10 @@
       personaAR: (trattaAuto * 2) / personeAuto,
       personeLabel: `in ${personeAuto} ${personeAuto === 1 ? 'persona' : 'persone'}`,
       note:
-        `Carburante ${fmtEur(carburante * 2)} A/R` +
-        (pedaggi ? ` + pedaggi stimati ${fmtEur(pedaggi * 2)}` : ' (nessun pedaggio stimato)') +
-        `. Consumo ${CAR.consumoLitri100} L/100 km a ${CAR.prezzoCarburante.toFixed(2)} €/L.`,
+        `${fonteTxt}. Consumo ${String(consumo).replace('.', ',')} ${UNITA[alimentazione]}/100 km → ` +
+        `${fmtEur(carburante * 2)} di carburante A/R` +
+        (pedaggi ? ` più ${fmtEur(pedaggi * 2)} di pedaggi stimati.` : ', nessun pedaggio stimato.'),
+      live: p.reale,
       links: [
         {
           label: 'Itinerario su Google Maps',
@@ -331,6 +410,7 @@
           m.piuEconomico ? '<span class="badge badge-cheap">Più economico</span>' : '',
           m.piuVeloce ? '<span class="badge badge-fast">Più veloce</span>' : '',
           m.disattivato ? '<span class="badge badge-warn">Tratta breve</span>' : '',
+          m.live ? '<span class="badge badge-live">Prezzo di oggi</span>' : '',
         ].join('');
 
         const links = m.links
@@ -402,6 +482,8 @@
       budget: $('budget').value ? Math.max(0, parseInt($('budget').value, 10)) : null,
       origine: $('origine').value.trim(),
       personeAuto: parseInt($('persone-auto').value, 10) || 1,
+      alimentazione: $('alimentazione').value,
+      consumo: Math.min(40, Math.max(1, parseFloat($('consumo').value) || CONSUMO_DEFAULT[$('alimentazione').value])),
     };
   }
 
@@ -443,6 +525,7 @@
     const map = {
       zona: 'zona', origine: 'origine', checkin: 'checkin',
       checkout: 'checkout', ospiti: 'ospiti', budget: 'budget',
+      alimentazione: 'alimentazione', consumo: 'consumo',
     };
     for (const [key, id] of Object.entries(map)) {
       const v = pick(key);
@@ -468,6 +551,8 @@
       auto: String(s.personeAuto),
     });
     if (s.budget) p.set('budget', String(s.budget));
+    p.set('alimentazione', s.alimentazione);
+    p.set('consumo', String(s.consumo));
     return p.toString();
   }
 
@@ -527,6 +612,9 @@
         origine: s.origine,
         zona: s.zona,
         dateGo: s.checkin,
+        alimentazione: s.alimentazione,
+        consumo: s.consumo,
+        provinciaPartenza: partenza.provincia,
       });
 
       renderModes(modes);
@@ -550,12 +638,34 @@
 
   /* ---------- avvio ---------- */
 
+  /* Il consumo ha un default per alimentazione, ma se l'utente lo
+     personalizza non glielo sovrascriviamo più. */
+  let consumoPersonalizzato = false;
+
+  function initCarburante() {
+    const sel = $('alimentazione');
+    const consumo = $('consumo');
+
+    consumo.addEventListener('input', () => { consumoPersonalizzato = true; });
+
+    sel.addEventListener('change', () => {
+      const tipo = sel.value;
+      $('consumo-unita').textContent = `(${UNITA[tipo]}/100 km)`;
+      if (!consumoPersonalizzato) consumo.value = CONSUMO_DEFAULT[tipo];
+      aggiornaEtichettaPrezzo();
+    });
+
+    $('consumo-unita').textContent = `(${UNITA[sel.value]}/100 km)`;
+  }
+
   function init() {
     initTheme();
     initDates();
+    initCarburante();
     $('foot-year').textContent = new Date().getFullYear();
 
     const fromUrl = restoreState();
+    if (new URLSearchParams(location.search).has('consumo')) consumoPersonalizzato = true;
 
     $('search-form').addEventListener('submit', (e) => {
       e.preventDefault();
@@ -574,6 +684,10 @@
         $('risultati').hidden = true;
         showError('');
         initDates();
+        consumoPersonalizzato = false;
+        $('consumo').value = CONSUMO_DEFAULT[$('alimentazione').value];
+        $('consumo-unita').textContent = `(${UNITA[$('alimentazione').value]}/100 km)`;
+        aggiornaEtichettaPrezzo();
         history.replaceState(null, '', location.pathname);
       }, 0);
     });
@@ -592,7 +706,7 @@
       setTimeout(() => { btn.textContent = 'Copia link ricerca'; }, 2200);
     });
 
-    if (fromUrl) runSearch();
+    caricaListino().then(() => { if (fromUrl) runSearch(); });
   }
 
   if (document.readyState === 'loading') {

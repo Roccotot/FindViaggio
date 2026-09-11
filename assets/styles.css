@@ -702,3 +702,23 @@ a { color: inherit; }
 }
 .foot-credit strong { color: var(--ink); font-weight: 600; }
 .foot-year::before { content: '· '; }
+
+/* ---------- indicatore dato in tempo reale ---------- */
+
+.badge-live { background: var(--sea-tint); color: var(--sea); }
+
+.tag-live {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--sea-tint);
+  color: var(--sea);
+}
+.note-card h3 .tag-live { margin-left: 4px; }
+#prezzo-live { line-height: 1.5; }

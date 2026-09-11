@@ -1,0 +1,48 @@
+name: Aggiorna prezzi carburanti
+
+# Gli open data MIMIT pubblicano ogni mattina i prezzi rilevati alle 8.
+# Questo workflow li scarica, calcola le mediane e committa data/carburanti.json,
+# così la pagina statica può leggerlo dalla propria origine senza problemi di CORS.
+#
+# Nota: GitHub esegue gli scheduled workflow solo sul branch di default,
+# quindi l'aggiornamento automatico parte una volta unito il branch in main.
+# Fino ad allora si può lanciare a mano da Actions → Run workflow.
+
+on:
+  schedule:
+    - cron: '30 6 * * *'   # ogni giorno alle 06:30 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: aggiorna-prezzi
+  cancel-in-progress: false
+
+jobs:
+  aggiorna:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Scarica ed elabora gli open data MIMIT
+        run: node scripts/aggiorna-prezzi.mjs
+
+      - name: Committa se i prezzi sono cambiati
+        run: |
+          if git diff --quiet -- data/carburanti.json; then
+            echo "Nessuna variazione: niente da committare."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/carburanti.json
+          git commit -m "Aggiorna prezzi carburanti ($(date -u +%Y-%m-%d))"
+          git push

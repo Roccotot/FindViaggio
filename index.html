@@ -142,6 +142,23 @@
               </select>
               <p class="hint">Serve solo a dividere carburante e pedaggi.</p>
             </div>
+
+            <div class="field">
+              <label for="alimentazione">Alimentazione</label>
+              <select id="alimentazione" name="alimentazione">
+                <option value="benzina" selected>Benzina</option>
+                <option value="gasolio">Gasolio</option>
+                <option value="gpl">GPL</option>
+                <option value="metano">Metano</option>
+              </select>
+              <p class="hint" id="prezzo-live">Prezzo del carburante in caricamento&hellip;</p>
+            </div>
+
+            <div class="field">
+              <label for="consumo">Consumo <span id="consumo-unita">(L/100 km)</span></label>
+              <input id="consumo" name="consumo" type="number" min="1" max="40" step="0.1" value="7" inputmode="decimal">
+              <p class="hint">Modificalo se conosci il consumo reale della tua auto.</p>
+            </div>
           </div>
         </div>
 
@@ -202,9 +219,10 @@
       <h2 class="section-title">Note sulle stime</h2>
       <div class="notes-grid">
         <article class="note-card">
-          <h3>Auto</h3>
-          <p>Distanza e tempo reali da OSRM. Carburante calcolato a 7 L/100 km con benzina a 1,85 €/L
-             (≈ 0,13 €/km); sopra i 100 km si aggiunge una stima di pedaggi di 0,08 €/km.</p>
+          <h3>Auto <span class="tag-live">dato reale</span></h3>
+          <p>Distanza e tempo reali da OSRM. Il prezzo del carburante è quello <strong>di oggi</strong>:
+             mediana self-service della provincia di partenza dagli open data MIMIT, aggiornata ogni
+             mattina. Sopra i 100 km si aggiunge una stima di pedaggi di 0,08 €/km.</p>
         </article>
         <article class="note-card">
           <h3>Treno</h3>
@@ -243,6 +261,7 @@
       <ul>
         <li><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap · Nominatim</a></li>
         <li><a href="https://project-osrm.org/" target="_blank" rel="noopener">OSRM · calcolo stradale</a></li>
+        <li><a href="https://www.mimit.gov.it/it/open-data/elenco-dataset/carburanti-prezzi-praticati-e-anagrafica-degli-impianti" target="_blank" rel="noopener">MIMIT · prezzi carburanti</a></li>
       </ul>
     </div>
     <div class="foot-col">
