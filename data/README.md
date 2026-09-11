@@ -31,7 +31,9 @@ Struttura:
 ```
 
 - I prezzi sono **mediane** (non medie): un errore di digitazione di un gestore non sposta il risultato.
-- Solo rilevazioni **self-service**, che sono il prezzo pagato dalla maggioranza.
+- **Self-service** per benzina e gasolio, dove il divario col servito è di 15-20 centesimi.
+  GPL e metano si erogano quasi sempre con l'addetto, quindi per loro si prendono tutte le
+  rilevazioni: filtrarle sul self azzererebbe la copertura.
 - Solo i quattro carburanti base: le varianti premium (Hi-Q, Blue Diesel, Benzina speciale…) sono escluse.
 - Metano in €/kg, gli altri in €/L.
 - Una provincia compare solo se ha almeno 8 rilevazioni valide per quel carburante.

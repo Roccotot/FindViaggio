@@ -40,8 +40,10 @@ Il costo dell'auto non usa un coefficiente fisso: parte dal **prezzo effettivo d
 
 Ogni mattina una GitHub Action scarica gli open data
 [MIMIT — Osservaprezzi carburanti](https://www.mimit.gov.it/it/open-data/elenco-dataset/carburanti-prezzi-praticati-e-anagrafica-degli-impianti)
-(circa 60.000 rilevazioni comunicate dai gestori), calcola la **mediana self-service per provincia
-e a livello nazionale** e committa `data/carburanti.json`. La pagina lo legge dalla propria origine:
+(circa 40.000 rilevazioni valide comunicate dai gestori, 107 province coperte), calcola la
+**mediana per provincia e a livello nazionale** e committa `data/carburanti.json`.
+Benzina e gasolio usano il prezzo self-service; GPL e metano, che si erogano quasi sempre con
+l'addetto, usano tutte le rilevazioni. La pagina lo legge dalla propria origine:
 nessuna chiamata a terzi dal browser, nessun problema di CORS, nessuna chiave API.
 
 La provincia di partenza viene ricavata dal campo `ISO3166-2-lvl6` restituito da Nominatim

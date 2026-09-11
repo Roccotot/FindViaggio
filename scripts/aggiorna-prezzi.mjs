@@ -29,6 +29,13 @@ const URL_IMPIANTI = 'https://www.mimit.gov.it/images/exportCSV/anagrafica_impia
    Benzina speciale…) sono escluse perché falserebbero la mediana. */
 const CARBURANTI = { benzina: 'benzina', gasolio: 'gasolio', gpl: 'gpl', metano: 'metano' };
 
+/* Fra self e servito ballano 15-20 centesimi su benzina e gasolio, quindi lì
+   teniamo solo il self: è il prezzo che paga la maggioranza. GPL e metano
+   invece si erogano quasi sempre con l'addetto — filtrarli sul self li
+   azzererebbe (nel primo run copriva 1 provincia su 107 e zero per il
+   metano), perciò per loro si prendono tutte le rilevazioni. */
+const SOLO_SELF = new Set(['benzina', 'gasolio']);
+
 /* Limiti di plausibilità in €/L (o €/kg per il metano): fuori da qui
    si tratta quasi sempre di errori di digitazione dei gestori. */
 const LIMITI = {
@@ -148,10 +155,10 @@ function elabora(csvPrezzi, csvImpianti) {
   let scartati = 0;
 
   for (const r of prezzi) {
-    if (r.self !== '1') continue; // solo self service: è il prezzo che paga la maggioranza
-
     const tipo = CARBURANTI[r.carburante.toLowerCase()];
     if (!tipo) continue; // varianti premium e carburanti minori
+
+    if (SOLO_SELF.has(tipo) && r.self !== '1') continue;
 
     const valore = parseFloat(r.prezzo.replace(',', '.'));
     const [min, max] = LIMITI[tipo];
@@ -189,7 +196,10 @@ function elabora(csvPrezzi, csvImpianti) {
     fonte: 'MIMIT — Osservaprezzi carburanti (open data)',
     fonteUrl:
       'https://www.mimit.gov.it/it/open-data/elenco-dataset/carburanti-prezzi-praticati-e-anagrafica-degli-impianti',
-    nota: 'Mediana dei prezzi self-service comunicati dai gestori. Metano in €/kg, gli altri in €/L.',
+    nota:
+      'Mediana dei prezzi comunicati dai gestori: self-service per benzina e gasolio, ' +
+      'tutte le modalità per GPL e metano, che si erogano quasi sempre con addetto. ' +
+      'Metano in €/kg, gli altri in €/L.',
     rilevazioni: considerati,
     scartate: scartati,
     nazionale: riepiloga(nazionale),

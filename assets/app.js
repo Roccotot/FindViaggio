@@ -26,6 +26,8 @@
 
   const CONSUMO_DEFAULT = { benzina: 7, gasolio: 5.5, gpl: 9, metano: 5 };
   const UNITA = { benzina: 'L', gasolio: 'L', gpl: 'L', metano: 'kg' };
+  /* Su GPL e metano il prezzo non è "self": si eroga con l'addetto. */
+  const HA_SELF = new Set(['benzina', 'gasolio']);
   const ETICHETTA = { benzina: 'Benzina', gasolio: 'Gasolio', gpl: 'GPL', metano: 'Metano' };
 
   const GIORNI_VALIDITA = 21;    // oltre questa soglia il dato è considerato vecchio
@@ -163,7 +165,7 @@
     const nota = $('prezzo-live');
     if (p.reale) {
       nota.innerHTML =
-        `<span class="tag-live">oggi</span> ${ETICHETTA[tipo]} self ` +
+        `<span class="tag-live">oggi</span> ${ETICHETTA[tipo]}${HA_SELF.has(tipo) ? ' self' : ''} ` +
         `${p.valore.toFixed(3).replace('.', ',')} €/${UNITA[tipo]} · media nazionale MIMIT, ` +
         `rilevazione del ${fmtDate(p.data)}`;
     } else {
@@ -283,7 +285,8 @@
 
     const prezzoTxt = `${p.valore.toFixed(3).replace('.', ',')} €/${UNITA[alimentazione]}`;
     const fonteTxt = p.reale
-      ? `${ETICHETTA[alimentazione]} self a ${prezzoTxt} · ${p.ambito}, MIMIT ${fmtDate(p.data)}`
+      ? `${ETICHETTA[alimentazione]}${HA_SELF.has(alimentazione) ? ' self' : ''} a ${prezzoTxt} · ` +
+        `${p.ambito}, MIMIT ${fmtDate(p.data)}`
       : `${ETICHETTA[alimentazione]} a ${prezzoTxt} · stima statica, listino del giorno non disponibile`;
     modes.push({
       id: 'car',
