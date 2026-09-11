@@ -45,12 +45,15 @@ jobs:
 
       - name: Committa se i prezzi sono cambiati
         run: |
-          if git diff --quiet -- data/carburanti.json; then
+          # Nota: "git diff" ignora i file non tracciati, quindi al primo giro
+          # non vedrebbe il file appena creato. Si mette in stage e si guarda
+          # l'indice, che copre sia il file nuovo sia quello modificato.
+          git add data/carburanti.json
+          if git diff --cached --quiet; then
             echo "Nessuna variazione: niente da committare."
             exit 0
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/carburanti.json
           git commit -m "Aggiorna prezzi carburanti ($(date -u +%Y-%m-%d))"
           git push
