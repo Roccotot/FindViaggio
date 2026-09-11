@@ -1,8 +1,8 @@
-# FindViaggio
+# Quantoviene
 
 **Trova dove dormire e scopri quanto costa arrivarci.**
 
-FindViaggio è una pagina web statica che parte da un unico modulo — destinazione, date,
+Quantoviene è una pagina web statica che parte da un unico modulo — destinazione, date,
 ospiti e città di partenza — e restituisce due cose insieme:
 
 1. **Dove dormire**: le ricerche già pronte su Booking, Airbnb, Google Hotels, Agoda,

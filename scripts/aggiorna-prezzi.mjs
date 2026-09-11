@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* =========================================================
-   FindViaggio — aggiornamento dei prezzi dei carburanti
+   Quantoviene — aggiornamento dei prezzi dei carburanti
    ---------------------------------------------------------
    Scarica gli open data MIMIT (Osservaprezzi carburanti),
    calcola la mediana self-service per provincia e a livello
@@ -101,7 +101,7 @@ function parseCsv(testo, colonneAttese) {
 
 async function scarica(url) {
   const res = await fetch(url, {
-    headers: { 'User-Agent': 'FindViaggio/1.0 (+https://github.com/Roccotot/FindViaggio)' },
+    headers: { 'User-Agent': 'Quantoviene/1.0 (+https://github.com/Roccotot/FindViaggio)' },
     redirect: 'follow',
   });
   if (!res.ok) throw new Error(`${url} → HTTP ${res.status}`);

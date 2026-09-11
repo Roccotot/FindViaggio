@@ -1,5 +1,5 @@
 /* =========================================================
-   FindViaggio — logica dell'applicazione
+   Quantoviene — logica dell'applicazione
    Rocco Totaro
    ---------------------------------------------------------
    Geocodifica: Nominatim (OpenStreetMap)
@@ -95,7 +95,7 @@
 
   function initTheme() {
     const btn = $('theme-toggle');
-    const stored = localStorage.getItem('fv-theme');
+    const stored = localStorage.getItem('qv-theme');
     if (stored === 'dark' || stored === 'light') {
       document.documentElement.dataset.theme = stored;
     }
@@ -115,7 +115,7 @@
           matchMedia('(prefers-color-scheme: dark)').matches);
       const next = dark ? 'light' : 'dark';
       document.documentElement.dataset.theme = next;
-      localStorage.setItem('fv-theme', next);
+      localStorage.setItem('qv-theme', next);
       label();
     });
   }
@@ -522,7 +522,7 @@
   function restoreState() {
     const params = new URLSearchParams(location.search);
     let saved = {};
-    try { saved = JSON.parse(localStorage.getItem('fv-last') || '{}'); } catch { /* ignora */ }
+    try { saved = JSON.parse(localStorage.getItem('qv-last') || '{}'); } catch { /* ignora */ }
 
     const pick = (k) => params.get(k) ?? saved[k] ?? '';
     const map = {
@@ -541,7 +541,7 @@
   }
 
   function saveState(s) {
-    try { localStorage.setItem('fv-last', JSON.stringify(s)); } catch { /* ignora */ }
+    try { localStorage.setItem('qv-last', JSON.stringify(s)); } catch { /* ignora */ }
   }
 
   function searchQuery(s) {
