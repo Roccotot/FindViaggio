@@ -393,17 +393,31 @@
 
   /* ---------- rendering ---------- */
 
+  let portali = [];
+
   function renderStay(links) {
-    $('stay-links').innerHTML = links
-      .map(
-        (l) => `
-      <a class="stay-link" href="${esc(l.url)}" target="_blank" rel="noopener">
-        <span class="stay-arrow" aria-hidden="true">↗</span>
-        <div class="stay-name">${esc(l.name)}</div>
-        <div class="stay-meta">${l.meta}</div>
-      </a>`
-      )
+    portali = links;
+    const sel = $('portale');
+    const preferito = (() => {
+      try { return localStorage.getItem('qv-portale'); } catch { return null; }
+    })();
+
+    sel.innerHTML = links
+      .map((l, i) => `<option value="${i}">${esc(l.name)} — ${esc(l.meta)}</option>`)
       .join('');
+
+    const i = links.findIndex((l) => l.name === preferito);
+    sel.value = String(i >= 0 ? i : 0);
+    aggiornaPortale();
+  }
+
+  /* Il bottone è un vero link: così target="_blank" non viene bloccato
+     dal browser come farebbe un window.open dentro un handler. */
+  function aggiornaPortale() {
+    const l = portali[Number($('portale').value)] || portali[0];
+    if (!l) return;
+    $('apri-portale').href = l.url;
+    try { localStorage.setItem('qv-portale', l.name); } catch { /* ignora */ }
   }
 
   function renderModes(modes) {
@@ -451,10 +465,12 @@
     const totale = alloggio !== null ? alloggio + cheap.gruppoAR : null;
 
     const items = [
-      ['Soggiorno', `${notti} ${notti === 1 ? 'notte' : 'notti'}`],
-      ['Date', `${fmtDate(checkin)} → ${fmtDate(checkout)}`, 'wide'],
-      ['Ospiti', `${ospiti}`],
-      ['Viaggio A/R', `${fmtEur(cheap.gruppoAR)}`],
+      [
+        'Soggiorno',
+        `${notti} ${notti === 1 ? 'notte' : 'notti'}, ${ospiti} ${ospiti === 1 ? 'ospite' : 'ospiti'}`,
+        'wide',
+      ],
+      ['Viaggio A/R', fmtEur(cheap.gruppoAR)],
     ];
     if (alloggio !== null) items.push(['Alloggio stimato', fmtEur(alloggio)]);
 
@@ -673,6 +689,14 @@
     $('search-form').addEventListener('submit', (e) => {
       e.preventDefault();
       runSearch();
+    });
+
+    $('portale').addEventListener('change', aggiornaPortale);
+
+    /* I link "Come funziona" aprono il blocco richiudibile invece di
+       portare l'utente su una freccia chiusa. */
+    document.querySelectorAll('a[href="#info"]').forEach((a) => {
+      a.addEventListener('click', () => { document.querySelector('.info').open = true; });
     });
 
     document.querySelectorAll('.chip').forEach((chip) => {

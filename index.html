@@ -46,8 +46,7 @@
     </a>
 
     <nav class="head-nav" aria-label="Navigazione principale">
-      <a href="#come-funziona">Come funziona</a>
-      <a href="#note">Note</a>
+      <a href="#info">Come funziona</a>
       <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Cambia tema">
         <span class="theme-icon" aria-hidden="true"></span>
         <span class="theme-label">Tema</span>
@@ -66,11 +65,6 @@
         Compila il modulo una volta sola: Quantoviene prepara le ricerche sui portali di alloggi
         e confronta auto, treno, bus e aereo con distanza, durata e costo stimato.
       </p>
-      <ul class="hero-points">
-        <li><strong>6 portali</strong> di alloggi pronti al click</li>
-        <li><strong>4 mezzi</strong> confrontati fianco a fianco</li>
-        <li><strong>0 account</strong>: nessun login, nessun tracciamento</li>
-      </ul>
     </div>
   </section>
 
@@ -181,8 +175,14 @@
       <div class="summary" id="summary"></div>
 
       <h2 class="section-title">Dove dormire</h2>
-      <p class="section-note">Ogni link apre il portale con destinazione, date e ospiti già impostati.</p>
-      <div class="stay-grid" id="stay-links"></div>
+      <div class="stay-picker">
+        <label for="portale">Portale</label>
+        <select id="portale"></select>
+        <a id="apri-portale" class="btn btn-primary" target="_blank" rel="noopener" href="#">
+          Apri ricerca <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+      <p class="section-note" id="portale-nota">Si apre con destinazione, date e ospiti già impostati.</p>
 
       <h2 class="section-title">Come arrivarci</h2>
       <p class="section-note" id="route-note">Confronto tra i mezzi, andata e ritorno per l'intero gruppo.</p>
@@ -191,60 +191,56 @@
     </div>
   </section>
 
-  <section id="come-funziona" class="section band">
+  <section id="info" class="section">
     <div class="wrap">
-      <h2 class="section-title">Come funziona</h2>
-      <ol class="steps">
-        <li>
-          <span class="step-n">1</span>
-          <h3>Dici dove e quando</h3>
-          <p>Destinazione, date, ospiti ed eventuale budget per notte.</p>
-        </li>
-        <li>
-          <span class="step-n">2</span>
-          <h3>Quantoviene geolocalizza</h3>
-          <p>Le località vengono risolte con OpenStreetMap e la strada calcolata con OSRM.</p>
-        </li>
-        <li>
-          <span class="step-n">3</span>
-          <h3>Confronti e prenoti</h3>
-          <p>Vedi costi e tempi dei quattro mezzi e apri i portali con la ricerca già pronta.</p>
-        </li>
-      </ol>
-    </div>
-  </section>
+      <details class="info">
+        <summary>
+          <span>Come funziona e come sono calcolate le stime</span>
+          <span class="info-chevron" aria-hidden="true"></span>
+        </summary>
 
-  <section id="note" class="section">
-    <div class="wrap">
-      <h2 class="section-title">Note sulle stime</h2>
-      <div class="notes-grid">
-        <article class="note-card">
-          <h3>Auto <span class="tag-live">dato reale</span></h3>
-          <p>Distanza e tempo reali da OSRM. Il prezzo del carburante è quello <strong>di oggi</strong>:
-             mediana self-service della provincia di partenza dagli open data MIMIT, aggiornata ogni
-             mattina. Sopra i 100 km si aggiunge una stima di pedaggi di 0,08 €/km.</p>
-        </article>
-        <article class="note-card">
-          <h3>Treno</h3>
-          <p>Percorso approssimato sulla tratta stradale. Tariffe medie italiane a scaglioni
-             (0,16 → 0,09 €/km) con minimo di 9 €. Alta velocità stimata sopra i 300 km.</p>
-        </article>
-        <article class="note-card">
-          <h3>Bus</h3>
-          <p>Velocità media 65 km/h sulla tratta stradale, tariffa 0,05 €/km con minimo di 9 €:
-             quasi sempre l'opzione più economica, quasi mai la più veloce.</p>
-        </article>
-        <article class="note-card">
-          <h3>Aereo</h3>
-          <p>Distanza in linea d'aria, 700 km/h di crociera più 3 h tra check-in e trasferimenti.
-             Tariffa low-cost 0,08 €/km con minimo di 35 €. Sconsigliato sotto i 300 km.</p>
-        </article>
-      </div>
-      <p class="disclaimer">
-        Tutti i valori sono <strong>stime indicative</strong> pensate per confrontare le alternative,
-        non prezzi reali: orari, disponibilità e tariffe vanno sempre verificati sui siti dei vettori.
-        Quantoviene non vende nulla, non usa cookie e non riceve commissioni.
-      </p>
+        <div class="info-body">
+          <p>
+            Scrivi dove e quando, più la città di partenza. Le località vengono risolte con
+            OpenStreetMap e la strada calcolata con OSRM; poi vedi i costi dei quattro mezzi e
+            apri i portali con la ricerca già pronta.
+          </p>
+
+          <dl class="info-list">
+            <dt>Auto <span class="tag-live">dato reale</span></dt>
+            <dd>
+              Distanza e tempo reali da OSRM. Il prezzo del carburante è quello <strong>di
+              oggi</strong>: mediana della provincia di partenza dagli open data MIMIT, aggiornata
+              ogni mattina. Sopra i 100 km si aggiunge una stima di pedaggi di 0,08 €/km.
+            </dd>
+
+            <dt>Treno</dt>
+            <dd>
+              Percorso approssimato sulla tratta stradale, tariffe medie italiane a scaglioni
+              (0,16 → 0,09 €/km) con minimo di 9 €. Alta velocità stimata sopra i 300 km.
+            </dd>
+
+            <dt>Bus</dt>
+            <dd>
+              Velocità media 65 km/h sulla tratta stradale, tariffa 0,05 €/km con minimo di 9 €:
+              quasi sempre l'opzione più economica, quasi mai la più veloce.
+            </dd>
+
+            <dt>Aereo</dt>
+            <dd>
+              Distanza in linea d'aria, 700 km/h di crociera più 3 h fra check-in e trasferimenti.
+              Tariffa low-cost 0,08 €/km con minimo di 35 €. Sconsigliato sotto i 300 km.
+            </dd>
+          </dl>
+
+          <p class="disclaimer">
+            Tranne il carburante, sono <strong>stime indicative</strong> pensate per confrontare le
+            alternative, non prezzi reali: orari, disponibilità e tariffe vanno sempre verificati
+            sui siti dei vettori. Quantoviene non vende nulla, non usa cookie e non riceve
+            commissioni.
+          </p>
+        </div>
+      </details>
     </div>
   </section>
 
@@ -267,8 +263,8 @@
     <div class="foot-col">
       <h4>Progetto</h4>
       <ul>
-        <li><a href="#come-funziona">Come funziona</a></li>
-        <li><a href="#note">Note sulle stime</a></li>
+        <li><a href="#info">Come funziona</a></li>
+        <li><a href="#info">Note sulle stime</a></li>
       </ul>
     </div>
     <p class="foot-credit">

@@ -5,8 +5,9 @@
 Quantoviene è una pagina web statica che parte da un unico modulo — destinazione, date,
 ospiti e città di partenza — e restituisce due cose insieme:
 
-1. **Dove dormire**: le ricerche già pronte su Booking, Airbnb, Google Hotels, Agoda,
-   Trivago e Hostelworld, con date, ospiti ed eventuale budget massimo già impostati.
+1. **Dove dormire**: un menu a tendina con Booking, Airbnb, Google Hotels, Agoda, Trivago e
+   Hostelworld; il portale scelto si apre con date, ospiti ed eventuale budget già impostati,
+   e viene ricordato per la volta successiva.
 2. **Come arrivarci**: il confronto fianco a fianco fra **auto, treno, bus e aereo**, con
    distanza, durata e costo stimato di andata e ritorno, per il gruppo e a persona.
 
