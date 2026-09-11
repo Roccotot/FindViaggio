@@ -1,664 +1,264 @@
 <!DOCTYPE html>
-<!-- saved from url=(0036)https://simonepera.cloud/viaggi.html -->
-<html lang="it"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FindViaggio — trova dove dormire e scopri quanto costa arrivarci</title>
+<meta name="description" content="FindViaggio confronta in un colpo solo gli alloggi su Booking, Airbnb e altri portali e stima distanza, tempo e costo del viaggio in auto, treno, bus o aereo. Progetto di Rocco Totaro.">
+<meta name="author" content="Rocco Totaro">
+<meta name="theme-color" content="#e2551f">
+<meta name="color-scheme" content="light dark">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cecilia Cerca casa e Viaggio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com/">
-<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
-<link href="./Cecilia Cerca casa e Viaggio_files/css2" rel="stylesheet">
-<style>
-  :root {
-    --ink: #1a1614;
-    --paper: #f4ede2;
-    --paper-2: #ebe1d1;
-    --accent: #c8501e;
-    --accent-soft: #e89a5b;
-    --rule: #1a161430;
-    --shadow: 0 1px 0 #0000000a, 0 4px 24px -8px #0000001a;
-  }
+<meta property="og:type" content="website">
+<meta property="og:title" content="FindViaggio — trova dove dormire e scopri quanto costa arrivarci">
+<meta property="og:description" content="Un unico modulo: alloggi sui portali principali + stima di distanza, tempo e costo per auto, treno, bus e aereo.">
+<meta property="og:locale" content="it_IT">
+<meta name="twitter:card" content="summary_large_image">
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'Fraunces', Georgia, serif;
-    background: var(--paper);
-    color: var(--ink);
-    min-height: 100vh;
-    padding: 40px 24px;
-    background-image:
-      radial-gradient(circle at 20% 10%, #e89a5b22 0%, transparent 40%),
-      radial-gradient(circle at 80% 80%, #c8501e15 0%, transparent 50%);
-  }
-
-  .wrap {
-    max-width: 920px;
-    margin: 0 auto;
-  }
-
-  header {
-    border-bottom: 2px solid var(--ink);
-    padding-bottom: 24px;
-    margin-bottom: 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-
-  .logo {
-    font-size: clamp(36px, 6vw, 64px);
-    font-weight: 700;
-    line-height: 0.95;
-    letter-spacing: -0.03em;
-    font-style: italic;
-  }
-  .logo span { color: var(--accent); font-style: normal; }
-
-  .tagline {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    opacity: 0.7;
-    max-width: 240px;
-    text-align: right;
-  }
-
-  .form-card {
-    background: var(--paper-2);
-    border: 1px solid var(--ink);
-    border-radius: 4px;
-    padding: 32px;
-    box-shadow: var(--shadow);
-    margin-bottom: 32px;
-  }
-
-  .form-card h2 {
-    font-size: 13px;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    margin-bottom: 24px;
-    padding-bottom: 12px;
-    border-bottom: 1px dashed var(--rule);
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-  }
-
-  .field { display: flex; flex-direction: column; gap: 6px; }
-
-  .field label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    opacity: 0.65;
-  }
-
-  .field input, .field select {
-    font-family: 'Fraunces', serif;
-    font-size: 17px;
-    padding: 10px 12px;
-    background: var(--paper);
-    border: 1px solid var(--ink);
-    border-radius: 2px;
-    color: var(--ink);
-    transition: border-color .15s, box-shadow .15s;
-  }
-  .field input:focus, .field select:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px #c8501e25;
-  }
-
-  .row-2 { grid-column: span 2; }
-  @media (max-width: 600px) { .row-2 { grid-column: span 1; } }
-
-  .btn {
-    margin-top: 28px;
-    width: 100%;
-    padding: 16px;
-    background: var(--ink);
-    color: var(--paper);
-    border: none;
-    border-radius: 2px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    cursor: pointer;
-    transition: background .15s;
-  }
-  .btn:hover { background: var(--accent); }
-
-  .results {
-    display: none;
-    animation: fade-in .4s ease;
-  }
-  .results.show { display: block; }
-
-  @keyframes fade-in {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .section-title {
-    font-size: 13px;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    margin: 32px 0 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--rule);
-  }
-
-  .links-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 12px;
-  }
-
-  .site-link {
-    display: block;
-    padding: 20px;
-    background: var(--paper-2);
-    border: 1px solid var(--ink);
-    border-radius: 2px;
-    text-decoration: none;
-    color: var(--ink);
-    transition: transform .15s, background .15s;
-    position: relative;
-  }
-  .site-link:hover {
-    background: var(--accent);
-    color: var(--paper);
-    transform: translate(-2px, -2px);
-    box-shadow: 4px 4px 0 var(--ink);
-  }
-  .site-link .site-name {
-    font-size: 22px;
-    font-weight: 700;
-    font-style: italic;
-  }
-  .site-link .site-arrow {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 18px;
-  }
-  .site-link .site-meta {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    opacity: 0.7;
-    margin-top: 4px;
-  }
-
-  .travel-card {
-    background: var(--paper-2);
-    border: 1px solid var(--ink);
-    border-radius: 4px;
-    padding: 24px;
-    margin-bottom: 12px;
-  }
-  .travel-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .travel-mode {
-    font-size: 24px;
-    font-weight: 700;
-    font-style: italic;
-  }
-  .travel-mode-icon {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    background: var(--ink);
-    color: var(--paper);
-    padding: 4px 10px;
-    border-radius: 2px;
-    letter-spacing: 0.15em;
-  }
-  .travel-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 16px;
-    padding: 16px 0;
-    border-top: 1px dashed var(--rule);
-    border-bottom: 1px dashed var(--rule);
-    margin-bottom: 12px;
-  }
-  .stat .stat-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    opacity: 0.6;
-    display: block;
-    margin-bottom: 4px;
-  }
-  .stat .stat-value {
-    font-size: 26px;
-    font-weight: 500;
-    line-height: 1;
-  }
-  .stat .stat-unit {
-    font-size: 14px;
-    opacity: 0.65;
-  }
-  .travel-link {
-    display: inline-block;
-    margin-top: 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--accent);
-    text-decoration: none;
-    border-bottom: 1px solid var(--accent);
-    padding-bottom: 2px;
-  }
-  .travel-link:hover { color: var(--ink); border-color: var(--ink); }
-
-  .loading, .err {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    opacity: 0.7;
-    padding: 12px 0;
-  }
-  .err { color: var(--accent); }
-
-  footer {
-    margin-top: 60px;
-    padding-top: 24px;
-    border-top: 1px solid var(--rule);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    opacity: 0.6;
-    line-height: 1.6;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-</style>
-</head>
-<body>
-<div class="wrap">
-
-  <header>
-    <div class="logo">Cecilia<br><span>·cerca</span> casa <em>&amp;</em> viaggio</div>
-    <div class="tagline">prepara la ricerca su booking + airbnb e stima il costo di andata.</div>
-  </header>
-
-  <form id="search-form" class="form-card">
-    <h2>① Dove vuoi andare</h2>
-    <div class="grid">
-      <div class="field row-2">
-        <label for="zona">Zona / città</label>
-        <input id="zona" type="text" placeholder="es. Brescia centro, Milano Navigli" required="">
-      </div>
-      <div class="field">
-        <label for="checkin">Check-in</label>
-        <input id="checkin" type="date" required="" min="2026-09-11">
-      </div>
-      <div class="field">
-        <label for="checkout">Check-out</label>
-        <input id="checkout" type="date" required="">
-      </div>
-      <div class="field">
-        <label for="ospiti">Ospiti</label>
-        <input id="ospiti" type="number" min="1" max="16" value="2" required="">
-      </div>
-      <div class="field">
-        <label for="prezzo">Prezzo max / notte (€, opz.)</label>
-        <input id="prezzo" type="number" min="0" placeholder="es. 120">
-      </div>
-    </div>
-
-    <h2 style="margin-top:32px">② Da dove parti</h2>
-    <div class="grid">
-      <div class="field row-2">
-        <label for="origine">Indirizzo / città di partenza</label>
-        <input id="origine" type="text" placeholder="es. Roma Termini, Via Garibaldi 5 Napoli" required="">
-      </div>
-      <div class="field row-2">
-        <label for="mezzo">Mezzo di trasporto</label>
-        <select id="mezzo" required="">
-          <option value="car">Auto</option>
-          <option value="train">Treno</option>
-          <option value="plane">Aereo</option>
-        </select>
-      </div>
-    </div>
-
-    <button class="btn" type="submit">Cerca →</button>
-  </form>
-
-  <section id="results" class="results show">
-
-    <div class="section-title">Cerca alloggi</div>
-    <div id="links" class="links-grid">
-    <a class="site-link" target="_blank" rel="noopener" href="https://www.booking.com/searchresults.it.html?ss=BAri&amp;checkin=2026-09-12&amp;checkout=2026-09-14&amp;group_adults=2&amp;no_rooms=1">
-      <span class="site-arrow">↗</span>
-      <div class="site-name">Booking</div>
-      <div class="site-meta">Hotel · B&amp;B · Apartments</div>
-    </a>
-    <a class="site-link" target="_blank" rel="noopener" href="https://www.airbnb.it/s/BAri/homes?checkin=2026-09-12&amp;checkout=2026-09-14&amp;adults=2">
-      <span class="site-arrow">↗</span>
-      <div class="site-name">Airbnb</div>
-      <div class="site-meta">Case · Stanze · Esperienze</div>
-    </a>
-  </div>
-
-    <div class="section-title">Stima del viaggio</div>
-    <div id="travel">
-    <div class="travel-card">
-      <div class="travel-head">
-        <div class="travel-mode">Auto</div>
-        <div class="travel-mode-icon">CAR</div>
-      </div>
-      <div class="travel-stats">
-        <div class="stat">
-          <span class="stat-label">Distanza</span>
-          <span class="stat-value">779 <span class="stat-unit">km</span></span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Tempo stimato</span>
-          <span class="stat-value">7h 57m</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Costo a tratta</span>
-          <span class="stat-value">€ 101</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Costo A/R</span>
-          <span class="stat-value">€ 203</span>
-        </div>
-      </div>
-      <div style="font-family:&#39;JetBrains Mono&#39;,monospace; font-size:11px; opacity:.7; margin-bottom:8px">Stima carburante (~0.13 €/km, ≈ 7 L/100 km)</div>
-      
-      <a class="travel-link" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&amp;origin=Prato&amp;destination=BAri&amp;travelmode=driving">Apri itinerario su Google Maps ↗</a>
-    
-    </div>
-  </div>
-
-  </section>
-
-  <footer>
-    Costruito con OpenStreetMap (Nominatim) per la geocodifica e OSRM per il calcolo stradale. <br>
-    Le stime di costo per treno e aereo sono basate su tariffe medie €/km e sono indicative — controlla sempre i prezzi reali sui rispettivi siti.
-  </footer>
-
-</div>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/styles.css">
 
 <script>
-// ----- helpers -----
-const $ = id => document.getElementById(id);
-
-// distanza in linea d'aria (Haversine) in km
-function haversineKm(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const toRad = x => x * Math.PI / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a = Math.sin(dLat/2)**2 +
-            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
-  return 2 * R * Math.asin(Math.sqrt(a));
-}
-
-// geocoding via Nominatim (OpenStreetMap) — gratuito, no API key
-async function geocode(query) {
-  const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`;
-  const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-  if (!res.ok) throw new Error('Geocoding fallito');
-  const data = await res.json();
-  if (!data.length) throw new Error(`Nessun risultato per "${query}"`);
-  return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon), name: data[0].display_name };
-}
-
-// route via OSRM (gratuito, no API key)
-async function osrmRoute(o, d) {
-  const url = `https://router.project-osrm.org/route/v1/driving/${o.lon},${o.lat};${d.lon},${d.lat}?overview=false`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('Routing fallito');
-  const data = await res.json();
-  if (!data.routes || !data.routes.length) throw new Error('Nessuna rotta trovata');
-  const r = data.routes[0];
-  return { km: r.distance / 1000, minutes: r.duration / 60 };
-}
-
-// ----- formattatori -----
-const fmtKm = v => v >= 100 ? Math.round(v) : v.toFixed(1);
-const fmtMin = v => {
-  const h = Math.floor(v / 60), m = Math.round(v % 60);
-  return h > 0 ? `${h}h ${m}m` : `${m}m`;
-};
-const fmtEur = v => `€ ${v.toFixed(0)}`;
-
-// ----- builder link -----
-function bookingUrl({ zona, checkin, checkout, ospiti, prezzo }) {
-  const u = new URL('https://www.booking.com/searchresults.it.html');
-  u.searchParams.set('ss', zona);
-  u.searchParams.set('checkin', checkin);
-  u.searchParams.set('checkout', checkout);
-  u.searchParams.set('group_adults', ospiti);
-  u.searchParams.set('no_rooms', '1');
-  if (prezzo) u.searchParams.set('nflt', `price=EUR-min-${prezzo}-1`);
-  return u.toString();
-}
-
-function airbnbUrl({ zona, checkin, checkout, ospiti, prezzo }) {
-  const slug = encodeURIComponent(zona);
-  const u = new URL(`https://www.airbnb.it/s/${slug}/homes`);
-  u.searchParams.set('checkin', checkin);
-  u.searchParams.set('checkout', checkout);
-  u.searchParams.set('adults', ospiti);
-  if (prezzo) u.searchParams.set('price_max', prezzo);
-  return u.toString();
-}
-
-// ----- builder ricerche viaggio -----
-function trenitaliaUrl(origine, dest, date) {
-  // Trenitalia non accetta deep-link affidabili: apriamo la home
-  return 'https://www.trenitalia.com/';
-}
-function italoUrl() {
-  return 'https://www.italotreno.it/';
-}
-function skyscannerUrl(origine, dest, date) {
-  return `https://www.skyscanner.it/trasporti/voli/?adults=1&adultsv2=1&cabinclass=economy&rtn=0&preferdirects=false&outboundaltsenabled=false&inboundaltsenabled=false&from=${encodeURIComponent(origine)}&to=${encodeURIComponent(dest)}&depart=${date}`;
-}
-function googleFlightsUrl(origine, dest, date) {
-  return `https://www.google.com/travel/flights?q=${encodeURIComponent('Voli da ' + origine + ' a ' + dest + ' il ' + date)}`;
-}
-
-// ----- calcolo costi -----
-// auto: media 7 L/100km, benzina ~1.85 €/L → ~0.13 €/km
-const COST_PER_KM_CAR = 0.13;
-// treno: stima media intercity/AV in Italia ~0.10 €/km
-const COST_PER_KM_TRAIN = 0.10;
-const TRAIN_MIN_FARE = 12;
-// aereo: low-cost europeo ~0.08 €/km + tassa fissa
-const COST_PER_KM_PLANE = 0.08;
-const PLANE_MIN_FARE = 30;
-
-// velocità medie per stima tempi
-const SPEED_TRAIN_KMH = 120; // media tra regionali e AV
-const SPEED_PLANE_KMH = 600;
-const PLANE_OVERHEAD_MIN = 180; // check-in + spostamenti aeroporto
-
-// ----- render -----
-function renderLinks(params) {
-  const html = `
-    <a class="site-link" target="_blank" rel="noopener" href="${bookingUrl(params)}">
-      <span class="site-arrow">↗</span>
-      <div class="site-name">Booking</div>
-      <div class="site-meta">Hotel · B&amp;B · Apartments</div>
-    </a>
-    <a class="site-link" target="_blank" rel="noopener" href="${airbnbUrl(params)}">
-      <span class="site-arrow">↗</span>
-      <div class="site-name">Airbnb</div>
-      <div class="site-meta">Case · Stanze · Esperienze</div>
-    </a>
-  `;
-  $('links').innerHTML = html;
-}
-
-function renderTravel({ mezzo, origine, dest, kmRoad, minRoad, kmAir, dateGo }) {
-  let mode, label, km, minutes, costo, nota, extraLinks = '';
-
-  if (mezzo === 'car') {
-    mode = 'Auto';
-    label = 'CAR';
-    km = kmRoad;
-    minutes = minRoad;
-    costo = km * COST_PER_KM_CAR;
-    nota = `Stima carburante (~${COST_PER_KM_CAR.toFixed(2)} €/km, ≈ 7 L/100 km)`;
-    extraLinks = `
-      <a class="travel-link" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origine)}&destination=${encodeURIComponent(dest)}&travelmode=driving">Apri itinerario su Google Maps ↗</a>
-    `;
-  } else if (mezzo === 'train') {
-    mode = 'Treno';
-    label = 'TRAIN';
-    km = kmRoad; // approssima la tratta
-    minutes = (km / SPEED_TRAIN_KMH) * 60;
-    costo = Math.max(km * COST_PER_KM_TRAIN, TRAIN_MIN_FARE);
-    nota = `Stima tariffa media (~${COST_PER_KM_TRAIN.toFixed(2)} €/km, min ${TRAIN_MIN_FARE}€). Per orari e prezzi reali consulta i siti.`;
-    extraLinks = `
-      <a class="travel-link" target="_blank" rel="noopener" href="${trenitaliaUrl()}">Cerca su Trenitalia ↗</a>
-      &nbsp;&nbsp;
-      <a class="travel-link" target="_blank" rel="noopener" href="${italoUrl()}">Cerca su Italo ↗</a>
-    `;
-  } else {
-    mode = 'Aereo';
-    label = 'PLANE';
-    km = kmAir; // distanza in linea d'aria
-    minutes = (km / SPEED_PLANE_KMH) * 60 + PLANE_OVERHEAD_MIN;
-    costo = Math.max(km * COST_PER_KM_PLANE, PLANE_MIN_FARE);
-    nota = `Stima tariffa low-cost (~${COST_PER_KM_PLANE.toFixed(2)} €/km, min ${PLANE_MIN_FARE}€) + ${PLANE_OVERHEAD_MIN/60}h tra check-in e trasferimenti.`;
-    extraLinks = `
-      <a class="travel-link" target="_blank" rel="noopener" href="${skyscannerUrl(origine, dest, dateGo)}">Cerca voli su Skyscanner ↗</a>
-      &nbsp;&nbsp;
-      <a class="travel-link" target="_blank" rel="noopener" href="${googleFlightsUrl(origine, dest, dateGo)}">Cerca su Google Flights ↗</a>
-    `;
-  }
-
-  $('travel').innerHTML = `
-    <div class="travel-card">
-      <div class="travel-head">
-        <div class="travel-mode">${mode}</div>
-        <div class="travel-mode-icon">${label}</div>
-      </div>
-      <div class="travel-stats">
-        <div class="stat">
-          <span class="stat-label">Distanza</span>
-          <span class="stat-value">${fmtKm(km)} <span class="stat-unit">km</span></span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Tempo stimato</span>
-          <span class="stat-value">${fmtMin(minutes)}</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Costo a tratta</span>
-          <span class="stat-value">${fmtEur(costo)}</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Costo A/R</span>
-          <span class="stat-value">${fmtEur(costo * 2)}</span>
-        </div>
-      </div>
-      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; opacity:.7; margin-bottom:8px">${nota}</div>
-      ${extraLinks}
-    </div>
-  `;
-}
-
-// ----- main flow -----
-$('search-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const params = {
-    zona: $('zona').value.trim(),
-    checkin: $('checkin').value,
-    checkout: $('checkout').value,
-    ospiti: $('ospiti').value,
-    prezzo: $('prezzo').value,
-  };
-  const origine = $('origine').value.trim();
-  const mezzo = $('mezzo').value;
-
-  if (params.checkout <= params.checkin) {
-    alert('Il check-out deve essere dopo il check-in.');
-    return;
-  }
-
-  $('results').classList.add('show');
-  renderLinks(params);
-  $('travel').innerHTML = `<div class="loading">Calcolo distanza e tempi…</div>`;
-
+  // Applica il tema salvato prima del primo paint, per evitare lo sfarfallio.
   try {
-    const [orig, dest] = await Promise.all([
-      geocode(origine),
-      geocode(params.zona),
-    ]);
-
-    let kmRoad = null, minRoad = null;
-    const kmAir = haversineKm(orig.lat, orig.lon, dest.lat, dest.lon);
-
-    if (mezzo === 'car' || mezzo === 'train') {
-      try {
-        const r = await osrmRoute(orig, dest);
-        kmRoad = r.km;
-        minRoad = r.minutes;
-      } catch {
-        // fallback: stima da linea d'aria
-        kmRoad = kmAir * 1.3;
-        minRoad = (kmRoad / 90) * 60;
-      }
-    }
-
-    renderTravel({
-      mezzo, origine, dest: params.zona,
-      kmRoad, minRoad, kmAir,
-      dateGo: params.checkin,
-    });
-  } catch (err) {
-    $('travel').innerHTML = `<div class="err">Errore: ${err.message}. Riprova specificando meglio le località.</div>`;
-  }
-
-  $('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
-
-// pre-popola le date con domani e dopodomani
-(function initDates() {
-  const t = new Date(); t.setDate(t.getDate() + 1);
-  const t2 = new Date(); t2.setDate(t2.getDate() + 3);
-  const fmt = d => d.toISOString().slice(0, 10);
-  $('checkin').value = fmt(t);
-  $('checkout').value = fmt(t2);
-  $('checkin').min = fmt(new Date());
-})();
+    var t = localStorage.getItem('fv-theme');
+    if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+  } catch (e) {}
 </script>
+</head>
+<body id="top">
 
+<a class="skip-link" href="#cerca">Vai al modulo di ricerca</a>
 
-</body></html>
+<header class="site-head">
+  <div class="wrap head-inner">
+    <a class="brand" href="#top" aria-label="FindViaggio, home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="28" height="28" fill="none">
+          <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2"/>
+          <path d="M21.5 10.5 18 18l-7.5 3.5L14 14l7.5-3.5Z" fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="brand-name">Find<em>Viaggio</em></span>
+    </a>
+
+    <nav class="head-nav" aria-label="Navigazione principale">
+      <a href="#come-funziona">Come funziona</a>
+      <a href="#note">Note</a>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Cambia tema">
+        <span class="theme-icon" aria-hidden="true"></span>
+        <span class="theme-label">Tema</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Pianificatore di viaggi · Italia &amp; Europa</p>
+      <h1>Trova dove dormire e <em>scopri quanto costa arrivarci</em>.</h1>
+      <p class="lede">
+        Compila il modulo una volta sola: FindViaggio prepara le ricerche sui portali di alloggi
+        e confronta auto, treno, bus e aereo con distanza, durata e costo stimato.
+      </p>
+      <ul class="hero-points">
+        <li><strong>6 portali</strong> di alloggi pronti al click</li>
+        <li><strong>4 mezzi</strong> confrontati fianco a fianco</li>
+        <li><strong>0 account</strong>: nessun login, nessun tracciamento</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="cerca" class="section">
+    <div class="wrap">
+      <form id="search-form" class="panel" novalidate>
+        <div class="panel-block">
+          <h2 class="block-title"><span class="step">1</span> Dove vuoi andare</h2>
+
+          <div class="grid">
+            <div class="field span-2">
+              <label for="zona">Destinazione</label>
+              <input id="zona" name="zona" type="text" required autocomplete="off"
+                     placeholder="es. Brescia centro, Lisbona, Milano Navigli">
+              <p class="hint" id="zona-hint">Città, quartiere o indirizzo.</p>
+            </div>
+
+            <div class="field">
+              <label for="checkin">Check-in</label>
+              <input id="checkin" name="checkin" type="date" required>
+            </div>
+
+            <div class="field">
+              <label for="checkout">Check-out</label>
+              <input id="checkout" name="checkout" type="date" required>
+            </div>
+
+            <div class="field">
+              <label for="ospiti">Ospiti</label>
+              <input id="ospiti" name="ospiti" type="number" min="1" max="16" step="1" value="2" required>
+            </div>
+
+            <div class="field">
+              <label for="budget">Budget per notte <span class="opt">opzionale</span></label>
+              <input id="budget" name="budget" type="number" min="0" step="5" placeholder="es. 120" inputmode="numeric">
+              <p class="hint">In euro, usato per filtrare e stimare il totale.</p>
+            </div>
+          </div>
+
+          <div class="chips" role="group" aria-label="Destinazioni suggerite">
+            <span class="chips-label">Prova con</span>
+            <button class="chip" type="button" data-dest="Roma">Roma</button>
+            <button class="chip" type="button" data-dest="Firenze">Firenze</button>
+            <button class="chip" type="button" data-dest="Napoli">Napoli</button>
+            <button class="chip" type="button" data-dest="Bari">Bari</button>
+            <button class="chip" type="button" data-dest="Barcellona">Barcellona</button>
+            <button class="chip" type="button" data-dest="Lisbona">Lisbona</button>
+          </div>
+        </div>
+
+        <div class="panel-block">
+          <h2 class="block-title"><span class="step">2</span> Da dove parti</h2>
+
+          <div class="grid">
+            <div class="field span-2">
+              <label for="origine">Partenza</label>
+              <input id="origine" name="origine" type="text" required autocomplete="off"
+                     placeholder="es. Prato, Roma Termini, Via Garibaldi 5 Napoli">
+            </div>
+
+            <div class="field span-2">
+              <label for="persone-auto">In auto siete in</label>
+              <select id="persone-auto" name="persone-auto">
+                <option value="1">1 persona (costo pieno)</option>
+                <option value="2" selected>2 persone (spesa divisa)</option>
+                <option value="3">3 persone</option>
+                <option value="4">4 persone</option>
+                <option value="5">5 persone</option>
+              </select>
+              <p class="hint">Serve solo a dividere carburante e pedaggi.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-actions">
+          <button class="btn btn-primary" type="submit">
+            <span class="btn-text">Cerca viaggio</span>
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </button>
+          <button class="btn btn-ghost" type="button" id="share-btn">Copia link ricerca</button>
+          <button class="btn btn-ghost" type="reset" id="reset-btn">Svuota</button>
+          <p class="form-error" id="form-error" role="alert" hidden></p>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section id="risultati" class="section results" aria-live="polite" hidden>
+    <div class="wrap">
+
+      <div class="summary" id="summary"></div>
+
+      <h2 class="section-title">Dove dormire</h2>
+      <p class="section-note">Ogni link apre il portale con destinazione, date e ospiti già impostati.</p>
+      <div class="stay-grid" id="stay-links"></div>
+
+      <h2 class="section-title">Come arrivarci</h2>
+      <p class="section-note" id="route-note">Confronto tra i mezzi, andata e ritorno per l'intero gruppo.</p>
+      <div class="modes-grid" id="modes"></div>
+
+    </div>
+  </section>
+
+  <section id="come-funziona" class="section band">
+    <div class="wrap">
+      <h2 class="section-title">Come funziona</h2>
+      <ol class="steps">
+        <li>
+          <span class="step-n">1</span>
+          <h3>Dici dove e quando</h3>
+          <p>Destinazione, date, ospiti ed eventuale budget per notte.</p>
+        </li>
+        <li>
+          <span class="step-n">2</span>
+          <h3>FindViaggio geolocalizza</h3>
+          <p>Le località vengono risolte con OpenStreetMap e la strada calcolata con OSRM.</p>
+        </li>
+        <li>
+          <span class="step-n">3</span>
+          <h3>Confronti e prenoti</h3>
+          <p>Vedi costi e tempi dei quattro mezzi e apri i portali con la ricerca già pronta.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="note" class="section">
+    <div class="wrap">
+      <h2 class="section-title">Note sulle stime</h2>
+      <div class="notes-grid">
+        <article class="note-card">
+          <h3>Auto</h3>
+          <p>Distanza e tempo reali da OSRM. Carburante calcolato a 7 L/100 km con benzina a 1,85 €/L
+             (≈ 0,13 €/km); sopra i 100 km si aggiunge una stima di pedaggi di 0,08 €/km.</p>
+        </article>
+        <article class="note-card">
+          <h3>Treno</h3>
+          <p>Percorso approssimato sulla tratta stradale. Tariffe medie italiane a scaglioni
+             (0,16 → 0,09 €/km) con minimo di 9 €. Alta velocità stimata sopra i 300 km.</p>
+        </article>
+        <article class="note-card">
+          <h3>Bus</h3>
+          <p>Velocità media 65 km/h sulla tratta stradale, tariffa 0,05 €/km con minimo di 9 €:
+             quasi sempre l'opzione più economica, quasi mai la più veloce.</p>
+        </article>
+        <article class="note-card">
+          <h3>Aereo</h3>
+          <p>Distanza in linea d'aria, 700 km/h di crociera più 3 h tra check-in e trasferimenti.
+             Tariffa low-cost 0,08 €/km con minimo di 35 €. Sconsigliato sotto i 300 km.</p>
+        </article>
+      </div>
+      <p class="disclaimer">
+        Tutti i valori sono <strong>stime indicative</strong> pensate per confrontare le alternative,
+        non prezzi reali: orari, disponibilità e tariffe vanno sempre verificati sui siti dei vettori.
+        FindViaggio non vende nulla, non usa cookie e non riceve commissioni.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap foot-inner">
+    <div class="foot-brand">
+      <span class="brand-name">Find<em>Viaggio</em></span>
+      <p>Trova dove dormire e scopri quanto costa arrivarci.</p>
+    </div>
+    <div class="foot-col">
+      <h4>Dati</h4>
+      <ul>
+        <li><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap · Nominatim</a></li>
+        <li><a href="https://project-osrm.org/" target="_blank" rel="noopener">OSRM · calcolo stradale</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h4>Progetto</h4>
+      <ul>
+        <li><a href="#come-funziona">Come funziona</a></li>
+        <li><a href="#note">Note sulle stime</a></li>
+      </ul>
+    </div>
+    <p class="foot-credit">
+      Ideato e realizzato da <strong>Rocco Totaro</strong>.
+      <span class="foot-year" id="foot-year"></span>
+    </p>
+  </div>
+</footer>
+
+<script src="assets/app.js" defer></script>
+</body>
+</html>
