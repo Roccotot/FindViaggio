@@ -27,7 +27,7 @@ Niente account, niente cookie, niente backend: tutto gira nel browser.
 
 | Mezzo | Distanza | Durata | Costo |
 |---|---|---|---|
-| Auto | percorso stradale OSRM | tempi OSRM | **prezzo carburante di oggi** × consumo + 0,08 €/km di pedaggi oltre i 100 km |
+| Auto | percorso stradale OSRM | tempi OSRM | **prezzo carburante di oggi** × consumo + pedaggi delle autostrade effettivamente percorse |
 | Treno | tratta stradale × 0,95 | 60 / 95 / 130 km/h per fascia | 0,16 → 0,09 €/km a scaglioni, minimo 9 € |
 | Bus | percorso stradale | 65 km/h | 0,05 €/km, minimo 9 € |
 | Aereo | linea d'aria | 700 km/h + 3 h di trasferimenti | 0,08 €/km, minimo 35 € |
@@ -72,7 +72,36 @@ vecchio e dichiarato che uno nuovo e sbagliato.
 > Run workflow**. Il workflow ha bisogno del permesso di scrittura sui contenuti
 > (*Settings → Actions → General → Workflow permissions → Read and write*).
 
-### Perché solo il carburante
+## Pedaggi
+
+Non esistono in tempo reale: le tariffe le fissa un decreto e cambiano il **1° gennaio**
+(+1,5% per il 2026). Nessun concessionario espone un'API pubblica, solo calcolatori web.
+
+Quello che si può fare, e che il sito fa, è **non applicare una media a tutto il percorso**.
+OSRM viene interrogato con `steps=true` e restituisce il riferimento della strada di ogni
+tappa; da lì si sommano i chilometri per autostrada e si applica la tariffa giusta:
+
+| Rete | €/km (IVA inclusa, classe A) |
+|---|---|
+| Rete ordinaria a pedaggio (A1, A4, A14, …) | 0,093 |
+| A18 e A20, Consorzio Autostrade Siciliane | 0,048 |
+| A2 Salerno–Reggio Calabria, A19, A29 | **0** |
+| Raccordi, statali, provinciali, strade urbane | **0** |
+
+La tariffa standard viene dalla media di Autostrade per l'Italia per la classe A
+(0,075 €/km in pianura al netto dell'IVA), più IVA al 22% e l'aumento 2026.
+
+Contava più di quanto sembri: circa **900 km della rete italiana sono gratuiti**. Su
+Napoli → Reggio Calabria il modello vecchio inventava circa 79 € di pedaggi andata e
+ritorno, quando la A2 è interamente gratuita e il costo reale è di 9 €.
+
+Limiti dichiarati: le tariffe variano da tratta a tratta e il sito ne usa una media per
+rete, quindi su percorsi lunghi lo scarto dal casello può essere del 10-20%. La A18 è
+gratuita fra Siracusa e Rosolini ma a pedaggio fra Messina e Catania, e con la sola sigla
+non è distinguibile: viene trattata tutta come a pedaggio. Se OSRM non restituisce i
+riferimenti delle strade, il sito torna alla vecchia stima sulla distanza **e lo dichiara**.
+
+### Perché solo il carburante è in tempo reale
 
 Treni e voli non hanno un equivalente utilizzabile:
 

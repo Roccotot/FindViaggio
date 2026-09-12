@@ -15,6 +15,24 @@
 
   /* ---------- parametri delle stime ---------- */
 
+  /* Pedaggi: le tariffe non cambiano in tempo reale, le fissa un decreto e
+     si aggiornano il 1 gennaio (per il 2026, +1,5%). Sono in €/km IVA
+     inclusa per la classe A. Il valore standard viene dalla tariffa media
+     di Autostrade per l'Italia, 0,075 €/km in pianura al netto dell'IVA. */
+  const PEDAGGIO_STANDARD = 0.093;
+
+  /* Non tutta la rete costa uguale, e circa 900 km non costano niente.
+     Le autostrade non elencate qui usano la tariffa standard; le strade
+     che non sono autostrade non pagano nulla. */
+  const RETE = {
+    A2: 0,       // Autostrada del Mediterraneo, Salerno-Reggio Calabria: gratuita
+    A19: 0,      // Palermo-Catania: gratuita
+    A29: 0,      // Palermo-Mazara del Vallo: gratuita
+    A18: 0.048,  // Consorzio Autostrade Siciliane: circa meta' della tariffa media
+    A20: 0.048,  // idem
+  };
+
+  /* Usata solo se il percorso non dice su quali strade passa. */
   const CAR = {
     pedaggioKm: 0.08,            // € / km oltre la soglia
     sogliaPedaggio: 100,         // km
@@ -210,14 +228,71 @@
   }
 
   async function osrmRoute(a, b) {
+    /* steps=true serve a sapere su quali autostrade si passa: senza,
+       i pedaggi resterebbero un coefficiente medio applicato a tutto. */
     const url =
       `https://router.project-osrm.org/route/v1/driving/${a.lon},${a.lat};${b.lon},${b.lat}` +
-      '?overview=false&alternatives=false';
+      '?overview=false&alternatives=false&steps=true';
     const res = await fetch(url);
     if (!res.ok) throw new Error('routing non disponibile');
     const data = await res.json();
     if (!data.routes || !data.routes.length) throw new Error('nessuna rotta stradale trovata');
-    return { km: data.routes[0].distance / 1000, minutes: data.routes[0].duration / 60 };
+
+    const rotta = data.routes[0];
+    const steps = (rotta.legs || []).flatMap((l) => l.steps || []);
+    return { km: rotta.distance / 1000, minutes: rotta.duration / 60, steps };
+  }
+
+  /* ---------- pedaggi ---------- */
+
+  /* OSRM indica il riferimento della strada di ogni tappa, a volte
+     concatenato ("A1;E35"). Ci interessa solo la sigla autostradale
+     italiana: raccordi, statali e provinciali non pagano pedaggio. */
+  function siglaAutostrada(ref) {
+    if (!ref) return null;
+    for (const parte of String(ref).split(/[;,]/)) {
+      const m = /^\s*(A\d{1,2})\s*$/.exec(parte);
+      if (m) return m[1];
+    }
+    return null;
+  }
+
+  /* Restituisce null se il percorso non dice su quali strade passa:
+     in quel caso si ricade sulla vecchia stima a coefficiente. */
+  function pedaggioDelPercorso(steps) {
+    if (!Array.isArray(steps) || !steps.length) return null;
+
+    const kmPerStrada = new Map();
+    let kmRiconosciuti = 0;
+
+    for (const s of steps) {
+      const sigla = siglaAutostrada(s && s.ref);
+      if (!sigla) continue;
+      const km = (s.distance || 0) / 1000;
+      kmPerStrada.set(sigla, (kmPerStrada.get(sigla) || 0) + km);
+      kmRiconosciuti += km;
+    }
+
+    if (!kmPerStrada.size) {
+      /* Nessuna autostrada nel percorso: e' un dato, non un'incognita.
+         Solo se mancano del tutto i riferimenti si torna alla stima. */
+      const conRef = steps.some((s) => s && s.ref);
+      return conRef ? { totale: 0, kmPedaggio: 0, tratte: [] } : null;
+    }
+
+    let totale = 0;
+    const tratte = [];
+    let kmPedaggio = 0;
+
+    for (const [sigla, km] of [...kmPerStrada].sort((a, b) => b[1] - a[1])) {
+      const tariffa = sigla in RETE ? RETE[sigla] : PEDAGGIO_STANDARD;
+      const costo = km * tariffa;
+      totale += costo;
+      if (tariffa > 0) kmPedaggio += km;
+      tratte.push({ sigla, km, costo, gratuita: tariffa === 0 });
+    }
+
+    return { totale, kmPedaggio, kmRiconosciuti, tratte };
   }
 
   /* ---------- link agli alloggi ---------- */
@@ -272,7 +347,7 @@
 
   function buildModes({
     roadKm, roadMin, airKm, ospiti, personeAuto, origine, zona, dateGo,
-    alimentazione, consumo, provinciaPartenza,
+    alimentazione, consumo, provinciaPartenza, steps,
   }) {
     const modes = [];
 
@@ -280,7 +355,10 @@
     const p = prezzoCarburante(alimentazione, provinciaPartenza);
     const eurKm = (consumo / 100) * p.valore;
     const carburante = roadKm * eurKm;
-    const pedaggi = roadKm > CAR.sogliaPedaggio ? roadKm * CAR.pedaggioKm : 0;
+    const ped = pedaggioDelPercorso(steps);
+    const pedaggi = ped
+      ? ped.totale
+      : (roadKm > CAR.sogliaPedaggio ? roadKm * CAR.pedaggioKm : 0);
     const trattaAuto = carburante + pedaggi;
 
     const prezzoTxt = `${p.valore.toFixed(3).replace('.', ',')} €/${UNITA[alimentazione]}`;
@@ -299,8 +377,7 @@
       personeLabel: `in ${personeAuto} ${personeAuto === 1 ? 'persona' : 'persone'}`,
       note:
         `${fonteTxt}. Consumo ${String(consumo).replace('.', ',')} ${UNITA[alimentazione]}/100 km → ` +
-        `${fmtEur(carburante * 2)} di carburante A/R` +
-        (pedaggi ? ` più ${fmtEur(pedaggi * 2)} di pedaggi stimati.` : ', nessun pedaggio stimato.'),
+        `${fmtEur(carburante * 2)} di carburante A/R. ${notaPedaggi(ped, pedaggi)}`,
       live: p.reale,
       links: [
         {
@@ -389,6 +466,27 @@
     fast.piuVeloce = true;
 
     return { modes, cheap, fast };
+  }
+
+  /* Dire sempre se il pedaggio viene dalle strade davvero percorse o da
+     una media: sono due gradi di affidabilita' diversi. */
+  function notaPedaggi(ped, pedaggi) {
+    if (!ped) {
+      return pedaggi
+        ? `Pedaggi ${fmtEur(pedaggi * 2)} A/R, stimati sulla distanza: il percorso non dice su quali strade passa.`
+        : 'Nessun pedaggio stimato.';
+    }
+
+    if (!ped.tratte.length) return 'Percorso senza autostrade: nessun pedaggio.';
+
+    const nomi = ped.tratte
+      .slice(0, 3)
+      .map((t) => `${t.sigla} ${Math.round(t.km)} km${t.gratuita ? ' (gratis)' : ''}`)
+      .join(', ');
+    const altre = ped.tratte.length > 3 ? ` e altre ${ped.tratte.length - 3}` : '';
+
+    if (!pedaggi) return `Su ${nomi}${altre}: nessun pedaggio.`;
+    return `Pedaggi ${fmtEur(pedaggi * 2)} A/R su ${nomi}${altre}.`;
   }
 
   /* ---------- rendering ---------- */
@@ -612,12 +710,13 @@
       const arrivo = await geocode(s.zona);
 
       const airKm = haversineKm(partenza, arrivo);
-      let roadKm, roadMin, stimato = false;
+      let roadKm, roadMin, steps = null, stimato = false;
 
       try {
         const r = await osrmRoute(partenza, arrivo);
         roadKm = r.km;
         roadMin = r.minutes;
+        steps = r.steps;
       } catch {
         roadKm = airKm * 1.3;          // fattore di tortuosità tipico della rete stradale
         roadMin = (roadKm / 85) * 60;
@@ -634,6 +733,7 @@
         alimentazione: s.alimentazione,
         consumo: s.consumo,
         provinciaPartenza: partenza.provincia,
+        steps,
       });
 
       renderModes(modes);
