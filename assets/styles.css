@@ -298,11 +298,7 @@ a { color: inherit; }
   font-weight: 600;
   letter-spacing: .01em;
 }
-.opt {
-  font-weight: 400;
-  color: var(--muted);
-  font-size: 12px;
-}
+
 .field input,
 .field select {
   font: inherit;
@@ -744,3 +740,68 @@ a { color: inherit; }
 }
 .info-list dt .tag-live { margin-left: 4px; }
 #prezzo-live { line-height: 1.5; }
+
+/* ---------- schermi larghi: la home in una schermata sola ----------
+   Sotto i 1200 px il modulo resta impilato. Sopra, i due blocchi vanno
+   affiancati: su un 1920 c'e' larghezza in abbondanza e sprecarla in
+   altezza costringe a scorrere per arrivare al bottone. */
+
+@media (min-width: 1200px) {
+  :root { --maxw: 1320px; }
+
+  .hero { padding-block: 22px 12px; }
+  .hero h1 { font-size: 30px; max-width: none; }
+
+  .section { padding-block: 26px; }
+
+  #search-form { display: grid; grid-template-columns: 1fr 1fr; }
+  #search-form .panel-block + .panel-block {
+    border-top: 0;
+    border-left: 1px solid var(--line-soft);
+  }
+  #search-form .panel-actions { grid-column: 1 / -1; }
+
+  /* footer su una riga sola invece che su due */
+  .foot-inner { grid-template-columns: 1.7fr 1fr 1fr auto; gap: 24px; }
+  .foot-credit {
+    grid-column: auto;
+    align-self: end;
+    text-align: right;
+    border-top: 0;
+    padding-top: 0;
+    margin-top: 0;
+  }
+  .site-foot { margin-top: 22px; padding-block: 26px 22px; }
+}
+
+/* Su schermi larghi il modulo puo' respirare in orizzontale, quindi si
+   stringe in verticale: e' li' che si gioca lo scorrimento. */
+@media (min-width: 1200px) {
+  .panel-block { padding: 22px 26px; }
+  .block-title { font-size: 18px; margin-bottom: 16px; }
+  .grid { gap: 14px; }
+  .field { gap: 5px; }
+  .field input, .field select { padding: 10px 12px; font-size: 15px; }
+  .field select { padding-right: 34px; }
+  .chips { margin-top: 14px; }
+  .panel-actions { padding: 15px 26px; }
+  .btn { padding: 11px 20px; font-size: 14px; }
+
+  .section-title { font-size: 24px; }
+  .info summary { padding: 14px 20px; font-size: 17px; }
+}
+
+/* Nel primo blocco date, ospiti e budget stanno su quattro colonne
+   invece che su due righe: e' la riga che costa di piu' in altezza. */
+@media (min-width: 1200px) {
+  #search-form .panel-block:first-child .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  #search-form .panel-block:first-child .span-2 { grid-column: span 4; }
+
+  .hero { padding-block: 14px 8px; }
+  .hero h1 { font-size: 27px; }
+  #info { padding-block: 14px; }
+  .site-foot { margin-top: 12px; padding-block: 16px 12px; }
+  .foot-brand p { margin-top: 4px; }
+}
