@@ -1,9 +1,9 @@
 {
- "aggiornato": "2026-09-28",
+ "aggiornato": "2026-09-29",
  "fonte": "MIMIT — Osservaprezzi carburanti (open data)",
  "fonteUrl": "https://www.mimit.gov.it/it/open-data/elenco-dataset/carburanti-prezzi-praticati-e-anagrafica-degli-impianti",
  "nota": "Mediana dei prezzi comunicati dai gestori: self-service per benzina e gasolio, tutte le modalità per GPL e metano, che si erogano quasi sempre con addetto. Metano in €/kg, gli altri in €/L.",
- "rilevazioni": 46866,
+ "rilevazioni": 46848,
  "scartate": 2,
  "nazionale": {
   "benzina": 2.159,
@@ -19,13 +19,13 @@
   },
   "AL": {
    "benzina": 2.149,
-   "gasolio": 2.38,
+   "gasolio": 2.385,
    "gpl": 0.719,
    "metano": 1.908
   },
   "AN": {
    "benzina": 2.139,
-   "gasolio": 2.369,
+   "gasolio": 2.359,
    "gpl": 0.769,
    "metano": 1.999
   },
@@ -34,14 +34,14 @@
    "gasolio": 2.4
   },
   "AP": {
-   "benzina": 2.149,
+   "benzina": 2.144,
    "gasolio": 2.359,
    "gpl": 0.761,
    "metano": 1.899
   },
   "AQ": {
    "benzina": 2.149,
-   "gasolio": 2.399,
+   "gasolio": 2.398,
    "gpl": 0.747,
    "metano": 1.875
   },
@@ -52,31 +52,31 @@
    "metano": 2.04
   },
   "AT": {
-   "benzina": 2.148,
+   "benzina": 2.143,
    "gasolio": 2.379,
    "gpl": 0.696
   },
   "AV": {
    "benzina": 2.169,
    "gasolio": 2.379,
-   "gpl": 0.723,
+   "gpl": 0.719,
    "metano": 1.799
   },
   "BA": {
-   "benzina": 2.168,
-   "gasolio": 2.394,
+   "benzina": 2.159,
+   "gasolio": 2.389,
    "gpl": 0.749,
    "metano": 1.897
   },
   "BG": {
-   "benzina": 2.159,
-   "gasolio": 2.396,
+   "benzina": 2.157,
+   "gasolio": 2.39,
    "gpl": 0.719,
    "metano": 1.795
   },
   "BI": {
    "benzina": 2.139,
-   "gasolio": 2.369,
+   "gasolio": 2.359,
    "gpl": 0.699
   },
   "BL": {
@@ -91,7 +91,7 @@
    "metano": 1.849
   },
   "BO": {
-   "benzina": 2.155,
+   "benzina": 2.149,
    "gasolio": 2.379,
    "gpl": 0.739,
    "metano": 1.899
@@ -110,7 +110,7 @@
   },
   "BT": {
    "benzina": 2.159,
-   "gasolio": 2.399,
+   "gasolio": 2.389,
    "gpl": 0.739
   },
   "BZ": {
@@ -125,19 +125,19 @@
    "gpl": 0.85
   },
   "CB": {
-   "benzina": 2.159,
-   "gasolio": 2.393,
+   "benzina": 2.152,
+   "gasolio": 2.389,
    "gpl": 0.779
   },
   "CE": {
-   "benzina": 2.154,
+   "benzina": 2.149,
    "gasolio": 2.359,
    "gpl": 0.689,
    "metano": 1.849
   },
   "CH": {
    "benzina": 2.159,
-   "gasolio": 2.389,
+   "gasolio": 2.382,
    "gpl": 0.789,
    "metano": 1.897
   },
@@ -158,7 +158,7 @@
   },
   "CR": {
    "benzina": 2.149,
-   "gasolio": 2.39,
+   "gasolio": 2.389,
    "gpl": 0.719,
    "metano": 1.894
   },
@@ -180,25 +180,25 @@
    "gpl": 0.764
   },
   "EN": {
-   "benzina": 2.179,
+   "benzina": 2.169,
    "gasolio": 2.399,
    "gpl": 0.79
   },
   "FC": {
-   "benzina": 2.144,
-   "gasolio": 2.359,
+   "benzina": 2.139,
+   "gasolio": 2.358,
    "gpl": 0.718,
    "metano": 1.899
   },
   "FE": {
-   "benzina": 2.155,
+   "benzina": 2.158,
    "gasolio": 2.359,
    "gpl": 0.732,
-   "metano": 1.829
+   "metano": 1.814
   },
   "FG": {
    "benzina": 2.169,
-   "gasolio": 2.399,
+   "gasolio": 2.389,
    "gpl": 0.759,
    "metano": 1.799
   },
@@ -215,8 +215,8 @@
    "metano": 1.999
   },
   "FR": {
-   "benzina": 2.159,
-   "gasolio": 2.379,
+   "benzina": 2.149,
+   "gasolio": 2.359,
    "gpl": 0.739,
    "metano": 1.969
   },
@@ -236,22 +236,22 @@
    "metano": 1.749
   },
   "IM": {
-   "benzina": 2.17,
+   "benzina": 2.169,
    "gasolio": 2.409
   },
   "IS": {
-   "benzina": 2.152,
+   "benzina": 2.157,
    "gasolio": 2.399,
    "gpl": 0.764
   },
   "KR": {
    "benzina": 2.179,
-   "gasolio": 2.41,
-   "gpl": 0.79
+   "gasolio": 2.409,
+   "gpl": 0.799
   },
   "LC": {
    "benzina": 2.159,
-   "gasolio": 2.398
+   "gasolio": 2.396
   },
   "LE": {
    "benzina": 2.169,
@@ -284,8 +284,8 @@
    "metano": 2.079
   },
   "MB": {
-   "benzina": 2.149,
-   "gasolio": 2.393,
+   "benzina": 2.148,
+   "gasolio": 2.389,
    "gpl": 0.739,
    "metano": 1.749
   },
@@ -301,7 +301,7 @@
    "gpl": 0.799
   },
   "MI": {
-   "benzina": 2.159,
+   "benzina": 2.155,
    "gasolio": 2.399,
    "gpl": 0.749,
    "metano": 1.849
@@ -313,10 +313,10 @@
    "metano": 1.929
   },
   "MO": {
-   "benzina": 2.164,
+   "benzina": 2.159,
    "gasolio": 2.389,
    "gpl": 0.729,
-   "metano": 1.853
+   "metano": 1.826
   },
   "MS": {
    "benzina": 2.159,
@@ -325,23 +325,23 @@
   },
   "MT": {
    "benzina": 2.179,
-   "gasolio": 2.39,
+   "gasolio": 2.389,
    "gpl": 0.769
   },
   "NA": {
-   "benzina": 2.159,
-   "gasolio": 2.369,
+   "benzina": 2.156,
+   "gasolio": 2.359,
    "gpl": 0.699,
    "metano": 1.839
   },
   "NO": {
    "benzina": 2.149,
-   "gasolio": 2.39,
+   "gasolio": 2.389,
    "gpl": 0.744,
    "metano": 1.797
   },
   "NU": {
-   "benzina": 2.199,
+   "benzina": 2.197,
    "gasolio": 2.419,
    "gpl": 0.899
   },
@@ -351,26 +351,26 @@
    "gpl": 0.808
   },
   "PA": {
-   "benzina": 2.169,
-   "gasolio": 2.395,
+   "benzina": 2.159,
+   "gasolio": 2.389,
    "gpl": 0.719,
    "metano": 2.097
   },
   "PC": {
-   "benzina": 2.15,
-   "gasolio": 2.389,
+   "benzina": 2.149,
+   "gasolio": 2.388,
    "gpl": 0.729,
    "metano": 1.824
   },
   "PD": {
-   "benzina": 2.154,
+   "benzina": 2.149,
    "gasolio": 2.359,
-   "gpl": 0.738,
+   "gpl": 0.739,
    "metano": 1.989
   },
   "PE": {
-   "benzina": 2.154,
-   "gasolio": 2.377,
+   "benzina": 2.149,
+   "gasolio": 2.359,
    "gpl": 0.797,
    "metano": 1.799
   },
@@ -387,42 +387,42 @@
    "metano": 1.989
   },
   "PN": {
-   "benzina": 2.16,
-   "gasolio": 2.399,
+   "benzina": 2.159,
+   "gasolio": 2.385,
    "gpl": 0.729
   },
   "PO": {
    "benzina": 2.169,
-   "gasolio": 2.409,
+   "gasolio": 2.407,
    "gpl": 0.708
   },
   "PR": {
    "benzina": 2.159,
    "gasolio": 2.379,
    "gpl": 0.778,
-   "metano": 1.899
+   "metano": 1.919
   },
   "PT": {
-   "benzina": 2.162,
+   "benzina": 2.159,
    "gasolio": 2.399,
    "gpl": 0.729,
    "metano": 2.099
   },
   "PU": {
    "benzina": 2.149,
-   "gasolio": 2.367,
+   "gasolio": 2.359,
    "gpl": 0.799,
    "metano": 1.999
   },
   "PV": {
    "benzina": 2.149,
-   "gasolio": 2.393,
+   "gasolio": 2.389,
    "gpl": 0.729,
    "metano": 1.799
   },
   "PZ": {
    "benzina": 2.169,
-   "gasolio": 2.399,
+   "gasolio": 2.389,
    "gpl": 0.769,
    "metano": 1.889
   },
@@ -445,7 +445,7 @@
   },
   "RG": {
    "benzina": 2.178,
-   "gasolio": 2.404,
+   "gasolio": 2.408,
    "gpl": 0.779
   },
   "RI": {
@@ -454,14 +454,14 @@
    "gpl": 0.729
   },
   "RM": {
-   "benzina": 2.159,
+   "benzina": 2.152,
    "gasolio": 2.379,
    "gpl": 0.729,
    "metano": 1.855
   },
   "RN": {
    "benzina": 2.139,
-   "gasolio": 2.369,
+   "gasolio": 2.367,
    "gpl": 0.719,
    "metano": 1.909
   },
@@ -478,23 +478,23 @@
    "metano": 1.649
   },
   "SI": {
-   "benzina": 2.167,
+   "benzina": 2.16,
    "gasolio": 2.399,
    "gpl": 0.769,
    "metano": 1.85
   },
   "SO": {
    "benzina": 2.129,
-   "gasolio": 2.367
+   "gasolio": 2.354
   },
   "SP": {
-   "benzina": 2.169,
+   "benzina": 2.167,
    "gasolio": 2.399,
    "gpl": 0.819
   },
   "SR": {
    "benzina": 2.169,
-   "gasolio": 2.408,
+   "gasolio": 2.409,
    "gpl": 0.789
   },
   "SS": {
@@ -503,24 +503,24 @@
    "gpl": 0.899
   },
   "SU": {
-   "benzina": 2.159,
+   "benzina": 2.165,
    "gasolio": 2.399,
    "gpl": 0.798
   },
   "SV": {
    "benzina": 2.159,
-   "gasolio": 2.389,
+   "gasolio": 2.399,
    "gpl": 0.845
   },
   "TA": {
-   "benzina": 2.164,
-   "gasolio": 2.376,
+   "benzina": 2.159,
+   "gasolio": 2.378,
    "gpl": 0.739,
    "metano": 1.899
   },
   "TE": {
-   "benzina": 2.153,
-   "gasolio": 2.379,
+   "benzina": 2.149,
+   "gasolio": 2.369,
    "gpl": 0.779,
    "metano": 1.749
   },
@@ -532,18 +532,18 @@
   },
   "TO": {
    "benzina": 2.149,
-   "gasolio": 2.399,
+   "gasolio": 2.398,
    "gpl": 0.727,
    "metano": 1.817
   },
   "TP": {
    "benzina": 2.177,
-   "gasolio": 2.394,
+   "gasolio": 2.389,
    "gpl": 0.849
   },
   "TR": {
-   "benzina": 2.159,
-   "gasolio": 2.365,
+   "benzina": 2.158,
+   "gasolio": 2.364,
    "gpl": 0.759,
    "metano": 1.899
   },
@@ -552,19 +552,19 @@
    "gasolio": 2.434
   },
   "TV": {
-   "benzina": 2.159,
+   "benzina": 2.156,
    "gasolio": 2.379,
    "gpl": 0.739,
    "metano": 1.879
   },
   "UD": {
-   "benzina": 2.189,
-   "gasolio": 2.405,
+   "benzina": 2.179,
+   "gasolio": 2.399,
    "gpl": 0.714
   },
   "VA": {
    "benzina": 2.159,
-   "gasolio": 2.396,
+   "gasolio": 2.397,
    "gpl": 0.739,
    "metano": 1.779
   },
@@ -591,17 +591,17 @@
   },
   "VR": {
    "benzina": 2.159,
-   "gasolio": 2.379,
+   "gasolio": 2.375,
    "gpl": 0.753,
    "metano": 1.969
   },
   "VT": {
-   "benzina": 2.168,
+   "benzina": 2.159,
    "gasolio": 2.379,
    "gpl": 0.739
   },
   "VV": {
-   "benzina": 2.174,
+   "benzina": 2.169,
    "gasolio": 2.399,
    "gpl": 0.759
   }
